@@ -18,7 +18,8 @@ var checkbox = document.getElementById('Show Path');
 var check = checkbox.checked;
 
 //variables for the painting algorithm
-var mouseDown = false;
+var mouseLeftDown = false;
+var mouseRightDown = false;
 var paintedOnThisGoAround = [];
 
 //Declare starting and ending node
@@ -148,6 +149,8 @@ function setup() {
     //initializes start and end by default
     start = undefined;
     end = undefined;
+    yellow = false;
+    blue = false;
     
     //sets the prospective neighbor of each node beforehand
     for (let i = 0; i < rows; i++) {
@@ -286,7 +289,7 @@ async function aStar() {
             
             //Spot found
             
-            if (neighbor == end && check == false) {
+            if (neighbor == end) {
                 bestPath = [];
                 neighbor.cameFrom = current;
                 bestPath.push(neighbor);
@@ -375,61 +378,64 @@ function paint(e) {
             //rect found
             if (xCoord >= startx && xCoord <= endx && yCoord >= starty && yCoord <= endy) {
                 let current = arr[i][j];
-                //switching color appropriately
-                if (!paintedOnThisGoAround.includes(current)) {
-                    if (!yellow) {
-                        if (current.color == "white") {
-                            current.color = "yellow";
-                            yellow = True;
-                            current.wall = false;
-                            start = current;
-                        }
-                        if (current == end) {
-                            blue = false;
-                            current.color = "black";
-                            end = undefined;
-                        }
-                        else {
-                            yellow = true;
-                            current.color = "yellow";
-                            start = current;
-                            opened_list = [start];
-                        }
-                    }
-                    else if (!blue && current != start) {
-                        if (current.color == "white") {
-                            current.wall = false;
-                        }
-                        blue = true;
-                        current.color = "blue";
-                        end = current;
-                    }
-                    //if start and end are already taken
-                    else {
-                        if (current == start) {
-                            yellow = false;
-                            current.color = "black";
-                            start = undefined;
-                        }
-                        else if (current == end) {
-                            blue = false;
-                            current.color = "black";
-                            end = undefined;
-                        }
-                        else if (current.color == "white") {
-                            current.wall = false;
-                            current.color = "black";
-                        }
-                        else {
-                            current.color = "white";
-                            current.wall = true;
-                        }
-                    }
 
-                    //keeping track of nodes that were already changed
-                    paintedOnThisGoAround.push(current);
-                    draw();
+                //switching color appropriately
+                if (!yellow && current.color == "black") {
+                    current.color = "yellow";
+                    yellow = true;
+                    start = current;
                 }
+                else if (!blue && current.color == "black") {
+                    blue = true;
+                    current.color = "blue";
+                    end = current;
+                }
+                //if start and end are already taken
+                else if (current.color == "black") {
+                    current.color = "white";
+                    current.wall = true;
+                }
+                draw();
+            }
+        }
+    }
+}
+
+function remove(e) {
+    let rect = c.getBoundingClientRect();
+
+    //coordinates of click
+    var xCoord = e.clientX - rect.left;
+    var yCoord = e.clientY - rect.top;
+
+    //finding the rect that was clicked on
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            let startx = i * (width / rows);
+            let endx = startx + (width / rows) - 1;
+            let starty = j * (height / cols);
+            let endy = starty + (height / cols) - 1;
+
+            //rect found
+            if (xCoord >= startx && xCoord <= endx && yCoord >= starty && yCoord <= endy) {
+                let current = arr[i][j];
+
+                //if the current clicked on node is not empty, empty it
+                if (current == start) {
+                    yellow = false;
+                    current.color = "black";
+                    start = undefined;
+                }
+                else if (current == end) {
+                    blue = false;
+                    current.color = "black";
+                    end = undefined;
+                }
+                else if (current.color == "white") {
+                    current.wall = false;
+                    current.color = "black";
+                }
+                draw();
             }
         }
     }
@@ -479,23 +485,37 @@ document.addEventListener('keydown', event => {
     }
 });
 
-//if the mouse moves while on canvas continue to paint
+//if the mouse moves while on canvas continue to paint / remove
 c.addEventListener("mousemove", function (e) {
-    if (mouseDown) {
+    if (mouseLeftDown) {
         paint(e);
+    }
+    if (mouseRightDown) {
+        remove(e);
     }
 }, true);
 
-//if mouse down paint
+//if mouse down paint / remove
 c.addEventListener("mousedown", function (e) {
-    mouseDown = true;
-    paint(e);
+    if (e.button == 0) {
+        mouseLeftDown = true;
+        paint(e);
+    }
+    else if (e.button == 2) {
+        mouseRightDown = true;
+        remove(e);
+    }
 }, false);
 
 //if mouse up stop painting and clear the paint memory
 c.addEventListener("mouseup", function (e) {
-    mouseDown = false;
-    paintedOnThisGoAround = [];
+    mouseLeftDown = false;
+    mouseRightDown = false;
+}, false);
+
+//prevents right click menu from appearing
+document.addEventListener("contextmenu", function(e){
+    e.preventDefault();
 }, false);
 
 //Used to delay the visualization in milliseconds
