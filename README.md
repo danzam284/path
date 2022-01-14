@@ -1,7 +1,7 @@
 # path
 Javascript and HTML pathfinder visualization
 
-#Controls
+# Controls
 Click to manually add starting, ending, and wall nodes
 
 Press space to randomly generate a percentage of wall nodes
