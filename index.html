@@ -1,18 +1,26 @@
 <html>
 
 <body style="background-color: rgb(255, 255, 255);">
-  <h1>
+  <h1 style="text-align: center;">
     Path Finding
   </h1>
-  <input id='slider' type="range" min=2 max=100 step=1>
-  Rows: <span id="choice"></span>
 
-  <input id='slider2' style="margin-left: 100px" type="range" min=0 max=70 step = 0.5>
-  Percent of nodes to be walls: <span id="choice2"></span>
+  <div id="inputs" style="text-align: center;">
+    <input id='slider' type="range" min=2 max=100 step=1>
+    Rows: <span id="choice"></span>
 
-  <input style="margin-left: 30" type="checkbox" id='Show Path' checked=true>Show Path
-  <br> <br>
-  <canvas id="canvas" width="700" height="700" style="border:1px solid #2a1baf;"></canvas>
+    <input id='slider2' style="margin-left: 30px;" type="range" min=0 max=70 step = 0.5>
+    Percent of nodes to be walls: <span id="choice2"></span>
+
+    <input style="margin-left:30px;" type="checkbox" id='Show Path' checked=true>Show Path
+
+    <input style="margin-left:30px;" type="button" value="Clear Board" onclick="setup();">
+
+    <a href="controls.html" style="margin-left:30px">Controls</a>
+  </div>
+  <br>
+  
+  <canvas style="padding: 0; margin: auto; display: block;" id="canvas" width="700" height="700" style="border:1px solid #2a1baf;"></canvas>
 
   <script>
     var c = document.getElementById("canvas");
