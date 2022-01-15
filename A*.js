@@ -1,10 +1,16 @@
 //defining initial global variables
 //array of all the nodes
 var arr = [];
-
+var mode = 0
 // array of opened and closed nodes
 var opened_list = [];
 var closed_list = [];
+
+//keeps track of visited and nonvisited nodes for the maze
+var visited = [];
+var nonvisited = [start];
+var neighborsM = [];
+var notAccessed = []
 
 //keeps track of the path with lowest f score
 var bestPath = [];
@@ -168,6 +174,8 @@ function hScore(i, j) {
 
 //draws the grid to the canvas
 function draw() {
+
+    //randomly changes the background color
     let ran = Math.random()
     if (ran < 0.33) {
         if (rSign == '+') {
@@ -218,6 +226,7 @@ function draw() {
         }
     }
     document.body.style.backgroundColor = "rgb(" + r + ", " + g + ", " +  b + ")";
+
     ctx.clearRect(0, 0, c.width, c.height);
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
@@ -249,7 +258,37 @@ function draw() {
 
 //runs the A star algorithm
 async function aStar() {
+    //memory for the start, end, and wall nodes before resetting
+    let memStart = start;
+    let memEnd = end;
+    let memWall = [];
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            if (arr[i][j].wall) {
+                memWall.push(arr[i][j]);
+            }
+        }
+    }
 
+    //resets the map
+    setup();
+
+    //reformulates the start, end, and wall nodes
+    if (memStart) {
+        let newStart = arr[memStart.x][memStart.y];
+        newStart.color = memStart.color;
+        start = newStart;
+    }
+    if (memEnd) {
+        let newEnd = arr[memEnd.x][memEnd.y];
+        newEnd.color = memEnd.color;
+        end = newEnd;
+    }
+    for (let i = 0; i < memWall.length; i++) {
+        let wallNode = memWall[i];
+        arr[wallNode.x][wallNode.y].wall = true;
+        arr[wallNode.x][wallNode.y].color = "white";
+    }
     //sets start and end by default if they have not been chosen
     if (start == undefined) {
         start = arr[0][0];
@@ -260,6 +299,7 @@ async function aStar() {
 
     //sets the open list to the starting node
     opened_list = [start];
+    closed_list = [];
 
     while (opened_list.length > 0) {
         //finds the open spot with the lowest f score
@@ -299,6 +339,7 @@ async function aStar() {
                     draw();
                     neighbor = neighbor.cameFrom;
                 }
+                mode = 0;
                 stopfunction();
             }
             
@@ -356,6 +397,7 @@ async function aStar() {
 
     //if loop is over
     alert("NO PATH AVAILABLE");
+    mode = 0;
     stopcode();
 }
 
@@ -444,7 +486,10 @@ function remove(e) {
 //if enter key is pressed run the A star algorithm
 document.addEventListener("keyup", function(event) {
     if (event.keyCode === 13) {
-        aStar();
+        if (mode == 0) {
+            mode = 2;
+            aStar();
+        }
     }
 });
 
@@ -481,6 +526,115 @@ document.addEventListener('keydown', event => {
                 }
             }
         }
+        draw();
+    }
+});
+
+//generates a maze
+async function generate_maze() {
+    mode = 1;
+
+    //works with current node
+    var currNode = nonvisited[0];
+    neighborsM = [];
+
+    //generates the neighbors associated with the current node
+    neighborsMaze(currNode.x, currNode.y);
+
+    if (neighborsM.length > 0) {
+
+        //picks one neighbor at random
+        let randomNeighbor = neighborsM[Math.floor(Math.random() * neighborsM.length)];
+        //if the neighbor has not been visited, set it as the current node and creat walls around it
+        if (!visited.includes(randomNeighbor)) {
+            visited.push(currNode);
+            nonvisited = nonvisited.slice(1);
+            nonvisited.push(randomNeighbor);
+            for (let i = 0; i < neighborsM.length; i++) {
+                if (neighborsM[i] != randomNeighbor && !visited.includes(neighborsM[i])) {
+                    visited.push(neighborsM[i]);
+                    neighborsM[i].color = "white";
+                    neighborsM[i].wall = true;
+
+                    //draw changes
+                    await sleep();
+                    draw();
+                }
+            }
+        }
+
+        //checks if current node has any available neighbors to work with
+        amt = 0;
+        for (let i = 0; i < neighborsM.length; i++) {
+            if (!visited.includes(neighborsM[i])) {
+                amt++;
+            }
+        }
+        //if not generate a maze in a new spot
+        if (amt == 0) {
+            if (notAccessed.length > 0) {
+                nonvisited = [notAccessed[0]];
+                notAccessed = notAccessed.slice(1);
+                generate_maze();
+            }
+            //if no more to do, done
+            else {
+                mode = 0;
+                breakfunction();
+            }
+        }
+        //if so, continue
+        else {
+            generate_maze();
+        }
+    }
+}
+
+//generates neighbor list for the maze function
+function neighborsMaze(i, j) {
+    var curr = arr[i][j];
+
+    //horizontal/vertical
+    if (curr.x < rows - 1) {
+        let n = arr[curr.x + 1][curr.y];
+        neighborsM.push(n);
+    }
+    if (curr.x > 0) {
+        let n = arr[curr.x - 1][curr.y];
+        neighborsM.push(n);
+    }
+    if (curr.y < cols - 1) {
+        let n = arr[curr.x][curr.y + 1];
+        neighborsM.push(n);
+    }
+    if (curr.y > 0) {
+        let n = arr[curr.x][curr.y - 1];
+        neighborsM.push(n);
+    }
+}
+
+//if m key is pressed, generate a maze
+document.addEventListener('keydown', event => {
+    if (event.code == "KeyM" && mode == 0) {
+
+        //put all nodes in the notaccessed list
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                notAccessed.push(arr[i][j]);
+            }
+        }
+
+        //sets up the variables for generating the maze
+        setup();
+        mazeMode = 1;
+        start = arr[0][0];
+        start.color = "yellow";
+        end = arr[rows - 1][cols - 1];
+        end.color = "blue";
+        visited = [end, arr[rows - 1][cols - 2], arr[rows - 2][cols - 1]];
+        nonvisited = [start];
+        generate_maze();
+        start = arr[0][0];
         draw();
     }
 });
