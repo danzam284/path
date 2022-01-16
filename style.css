@@ -2,7 +2,7 @@ body {
     background-color: rgb(255, 255, 255);;
 }
 
-h1 {
+h3 {
     text-align: center;
 }
 
@@ -20,7 +20,25 @@ a {
 
 canvas {
     padding: 0;
-    margin: auto;
-    display: block;
+    margin: 0;
+    display: inline-block;
+    vertical-align: middle;
+    margin-left:0px;
     border: 1px solid #2a1baf;
+}
+
+.rowsText {
+    margin-left: 400;
+}
+
+.percentText {
+    margin-left: 65;
+}
+
+.speedText {
+    margin-left: 80;
+}
+
+.pathText {
+    margin-left: 50;
 }
