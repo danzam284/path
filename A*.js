@@ -406,9 +406,7 @@ async function aStar() {
 
         //draws node with slight delay
         draw();
-        if (speed != 100) {
-            await sleep(100 - speed);
-        }
+        await sleep(100 - speed);
     }
 
     //if loop is over
@@ -574,9 +572,7 @@ async function generate_maze() {
                     neighborsM[i].wall = true;
 
                     //draw changes
-                    if (speed != 100) {
-                        await sleep();
-                    }
+                    await sleep();
                     draw();
                 }
             }
