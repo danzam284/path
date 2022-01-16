@@ -4,27 +4,36 @@
   </head>
 
 <body>
-  <h1>
+  <h3>
     Path Finding
-  </h1>
+  </h3>
+
+  <span class="rowsText">Rows: </span> <span id="choice"></span>
+
+  <span class="percentText">Percent of walls: </span> <span id="choice2"></span>
+
+  <span class="speedText">Speed</span>
+
+  <span class="pathText">Show Path</span>
 
   <div id="inputs">
-    <input id='slider' type="range" min=2 max=100 step=1>
-    Rows: <span id="choice"></span>
+    <input id='slider' type="range" min=10 max=99 step=1>
 
-    <input id='slider2' type="range" min=0 max=70 step = 0.5>
-    Percent of nodes to be walls: <span id="choice2"></span>
+    <input id='slider2' type="range" min=10 max=70 step=1>
 
-    <input type="checkbox" id='Show Path' checked=true>Show Path
+    <input id='slider3' type="range" min=0 max=100 step=1 value=99>
+
+    <input type="checkbox" id='Show Path' checked=true>
 
     <input type="button" value="Clear Board" onclick="setup();">
 
     <a href="controls.html" style="margin-left:30px">Controls</a>
   </div>
   <br>
-  
-  <canvas id="canvas" width="700" height="700"></canvas>
 
+  <img src="key.png" width=370 height=230>
+  <canvas id="canvas" width="700" height="700"></canvas>
+  <img src="controls.png" width=320 height=290>
   <script>
     var c = document.getElementById("canvas");
     var ctx = c.getContext("2d");
