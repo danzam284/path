@@ -6,6 +6,10 @@ var mode = 0
 var opened_list = [];
 var closed_list = [];
 
+//Keeps track of the speed variable
+let sliderSpeed = document.getElementById("slider3");
+let speed = sliderSpeed.value;
+
 //keeps track of visited and nonvisited nodes for the maze
 var visited = [];
 var nonvisited = [start];
@@ -72,6 +76,7 @@ slider.oninput = function() {
     blue = false;
     start = undefined;
     end = undefined;
+    mode = 0;
 
     //sets new values for row and col
     rows = slider.value;
@@ -85,6 +90,11 @@ slider2.oninput = function() {
     //resets slider attributes
     slider2Percent = slider2.value;
     sliderText2.innerHTML = slider2Percent;
+}
+
+//updates speed to slider's value
+sliderSpeed.oninput = function() {
+    speed = sliderSpeed.value;
 }
 //main node class which algorithm uses
 class node {
@@ -317,6 +327,9 @@ async function aStar() {
         if (current == end) {
             stopfunction();
         }
+        if (mode != 2) {
+            stopfunction();
+        }
 
         //removes index q from the open list and adds it to closed list
         closed_list.push(current);
@@ -339,6 +352,7 @@ async function aStar() {
                     draw();
                     neighbor = neighbor.cameFrom;
                 }
+                draw();
                 mode = 0;
                 stopfunction();
             }
@@ -392,7 +406,9 @@ async function aStar() {
 
         //draws node with slight delay
         draw();
-        await sleep();
+        if (speed != 100) {
+            await sleep(100 - speed);
+        }
     }
 
     //if loop is over
@@ -496,6 +512,7 @@ document.addEventListener("keyup", function(event) {
 //if space if pressed generate random map of walls
 document.addEventListener('keydown', event => {
     if (event.code === 'Space') {
+        mode = 0;
 
         //keep track of start and end to preserve their memory
         let memStart = start;
@@ -557,7 +574,9 @@ async function generate_maze() {
                     neighborsM[i].wall = true;
 
                     //draw changes
-                    await sleep();
+                    if (speed != 100) {
+                        await sleep();
+                    }
                     draw();
                 }
             }
@@ -569,6 +588,10 @@ async function generate_maze() {
             if (!visited.includes(neighborsM[i])) {
                 amt++;
             }
+        }
+        if (mode != 1) {
+            mode = 0;
+            breakfunction();
         }
         //if not generate a maze in a new spot
         if (amt == 0) {
