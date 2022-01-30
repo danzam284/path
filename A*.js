@@ -23,10 +23,6 @@ var bestPath = [];
 var yellow = false;
 var blue = false;
 
-//checkpath to show line
-var checkbox = document.getElementById('Show Path');
-var check = checkbox.checked;
-
 //variables for the painting algorithm
 var mouseLeftDown = false;
 var mouseRightDown = false;
@@ -40,12 +36,10 @@ var end;
 var width = c.width, height = c.height;
 
 //keeps track of background color
-var r = 100;
-var g = 100;
-var b = 100;
-var rSign = '+';
-var gSign = '+';
-var bSign = '+';
+var r = 176;
+var g = 216;
+var b = 230;
+var rgbSign = true;
 
 //number of rows and columns in the canvas
 var rows = 40, cols = 40;
@@ -55,16 +49,6 @@ var slider = document.getElementById('slider');
 var sliderText = document.getElementById("choice");
 slider.value = rows;
 sliderText.innerHTML = rows;
-var slider2 = document.getElementById("slider2");
-var sliderText2 = document.getElementById("choice2");
-slider2.value = 30;
-sliderText2.innerHTML = slider2.value;
-
-//updates the check variable
-checkbox.oninput = function() {
-    bestPath = [];
-    check = checkbox.checked;
-}
 
 //slider for the choice of grid size
 slider.oninput = function() {
@@ -83,13 +67,6 @@ slider.oninput = function() {
     cols = slider.value;
     sliderText.innerHTML = rows;
     setup();
-}
-
-//slider for choice of wall percentage
-slider2.oninput = function() {
-    //resets slider attributes
-    slider2Percent = slider2.value;
-    sliderText2.innerHTML = slider2Percent;
 }
 
 //updates speed to slider's value
@@ -184,55 +161,32 @@ function hScore(i, j) {
 
 //draws the grid to the canvas
 function draw() {
-
-    //randomly changes the background color
-    let ran = Math.random()
-    if (ran < 0.33) {
-        if (rSign == '+') {
-            r += 3;
-            if (r >= 255) {
-                r = 255;
-                rSign = '-';
-            }
+    if (rgbSign) {
+        if (r > 48) {
+            r--;
         }
-        else {
-            r -= 3;
-            if (r <= 0) {
-                r = 0;
-                rSign = '+';
-            }
+        if (g > 25) {
+            g--;
         }
-    }
-    else if (ran < 0.66) {
-        if (gSign == '+') {
-            g += 3;
-            if (g >= 255) {
-                g = 255;
-                gSign = '-';
-            }
+        if (b > 52) {
+            b--;
         }
-        else {
-            g -= 3;
-            if (g <= 0) {
-                g = 0;
-                gSign = '+';
-            }
+        if (g == 25) {
+            rgbSign = false;
         }
     }
     else {
-        if (bSign == '+') {
-            b += 3;
-            if (b >= 255) {
-                b = 255;
-                bSign = '-';
-            }
+        if (r < 173) {
+            r++;
         }
-        else {
-            b -= 3;
-            if (b <= 0) {
-                b = 0;
-                bSign = '+';
-            }
+        if (g < 216) {
+            g++;
+        }
+        if (b < 230) {
+            b++;
+        }
+        if (g == 216) {
+            rgbSign = true;
         }
     }
     document.body.style.backgroundColor = "rgb(" + r + ", " + g + ", " +  b + ")";
@@ -383,14 +337,7 @@ async function aStar() {
 
         //draws out the current best path and checks if loop should break
         if (opened_list.length > 0) {
-            if (check == true) {
-                bestPath = [];
-                bestPath.push(current);
-                while (current) {
-                    bestPath.push(current.cameFrom);
-                    current = current.cameFrom;
-                }
-            }
+            //pass
         }
         else {
             break;
@@ -507,6 +454,14 @@ document.addEventListener("keyup", function(event) {
     }
 });
 
+//used for button onclick
+function buttonAStar() {
+    if (mode == 0) {
+        mode = 2;
+        aStar();
+    }
+}
+
 //if space if pressed generate random map of walls
 document.addEventListener('keydown', event => {
     if (event.code === 'Space') {
@@ -535,7 +490,7 @@ document.addEventListener('keydown', event => {
         for (let i = 0; i < rows; i++) {
             for (let j = 0; j < cols; j++) {
                 let ran = Math.random();
-                if (ran < (slider2.value / 100) && arr[i][j] != start && arr[i][j] != end) {
+                if (ran < (35 / 100) && arr[i][j] != start && arr[i][j] != end) {
                     arr[i][j].wall = true;
                     arr[i][j].color = "white";
                 }
@@ -657,6 +612,30 @@ document.addEventListener('keydown', event => {
         draw();
     }
 });
+
+function mazeButton() {
+    if (mode == 0) {
+        //put all nodes in the notaccessed list
+        for (let i = 0; i < rows; i++) {
+            for (let j = 0; j < cols; j++) {
+                notAccessed.push(arr[i][j]);
+            }
+        }
+
+        //sets up the variables for generating the maze
+        setup();
+        mazeMode = 1;
+        start = arr[0][0];
+        start.color = "yellow";
+        end = arr[rows - 1][cols - 1];
+        end.color = "blue";
+        visited = [end, arr[rows - 1][cols - 2], arr[rows - 2][cols - 1]];
+        nonvisited = [start];
+        generate_maze();
+        start = arr[0][0];
+        draw();
+    }
+}
 
 //if the mouse moves while on canvas continue to paint / remove
 c.addEventListener("mousemove", function (e) {
