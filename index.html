@@ -4,28 +4,23 @@
   </head>
 
 <body>
-
-  <span class="rowsText">Rows: </span> <span id="choice"></span>
-
-  <span class="percentText">Percent of walls: </span> <span id="choice2"></span>
+<header>
+  <span class="rowsText">Size: </span> <span class="choice" id="choice"></span>
 
   <span class="speedText">Speed</span>
 
-  <span class="pathText">Show Path</span>
-
   <div id="inputs">
-    <input id='slider' type="range" min=10 max=99 step=1>
+    <input type="button" value="Run Algorithm" class="Run" onclick="buttonAStar(); blur();">
+    <input type="button" value="Clear Board" class="Clear" onclick="if (mode == 0) setup(); blur();">
 
-    <input id='slider2' type="range" min=10 max=70 step=1>
+    <input type="button" value="Generate Maze" class="Maze" onclick="mazeButton(); blur();">
 
-    <input id='slider3' type="range" min=0 max=100 step=1 value=99>
+    <input class='slider' id='slider' type="range" min=10 max=99 step=1>
 
-    <input type="checkbox" id='Show Path' checked=true>
+    <input class='slider3' id='slider3' type="range" min=0 max=100 step=1 value=99>
 
-    <input type="button" value="Clear Board" onclick="setup();">
-
-    <a href="controls.html" style="margin-left:30px">Controls</a>
   </div>
+</header>
   <br>
 
   <img src="key.png" width=370 height=230>
