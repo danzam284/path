@@ -67,17 +67,17 @@ canvas {
   }
 
 .rowsText {
-    margin-left: 818;
-    color:#00dffd;
+    margin-left: 885;
+    color:#023f47;
 }
 
 .speedText {
-    margin-left: 85;
-    color:#00dffd;
+    margin-left: 70;
+    color:#023f47;
 }
 
 .choice {
-    color:#00dffd;
+    color:#023f47;
 }
 .Run {
     background-color: #00dffd;
@@ -172,5 +172,38 @@ canvas {
   
 .maze:hover,
 .maze:focus {
+    background-color: #1f1a1c;
+}
+
+
+.Walls {
+    background-color: #00dffd;
+    border-radius: 8px;
+    border-style: none;
+    box-sizing: border-box;
+    color: #FFFFFF;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    height: 40px;
+    line-height: 20px;
+    list-style: none;
+    margin: 0;
+    outline: none;
+    padding: 10px 16px;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    transition: color 100ms;
+    vertical-align: baseline;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+  
+.Walls:hover,
+.Walls:focus {
     background-color: #1f1a1c;
 }
