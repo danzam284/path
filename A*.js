@@ -47,8 +47,10 @@ var rows = 40, cols = 40;
 //setting the slider texts
 var slider = document.getElementById('slider');
 var sliderText = document.getElementById("choice");
+var speedText = document.getElementById("choice2");
 slider.value = rows;
 sliderText.innerHTML = rows;
+speedText.innerHTML = "fast";
 
 //slider for the choice of grid size
 slider.oninput = function() {
@@ -72,6 +74,15 @@ slider.oninput = function() {
 //updates speed to slider's value
 sliderSpeed.oninput = function() {
     speed = sliderSpeed.value;
+    if (speed > 70) {
+        speedText.innerHTML = "fast";
+    }
+    else if (speed > 30) {
+        speedText.innerHTML = "mid.";
+    }
+    else {
+        speedText.innerHTML = "slow";
+    }
 }
 //main node class which algorithm uses
 class node {
@@ -465,40 +476,45 @@ function buttonAStar() {
 //if space if pressed generate random map of walls
 document.addEventListener('keydown', event => {
     if (event.code === 'Space') {
-        mode = 0;
-
-        //keep track of start and end to preserve their memory
-        let memStart = start;
-        let memEnd = end;
-
-        //resets the map
-        setup();
-
-        //reformulates the start and end node
-        if (memStart) {
-            let newStart = arr[memStart.x][memStart.y];
-            newStart.color = memStart.color;
-            start = newStart;
-        }
-        if (memEnd) {
-            let newEnd = arr[memEnd.x][memEnd.y];
-            newEnd.color = memEnd.color;
-            end = newEnd;
-        }
-
-        //randomly generates walls
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                let ran = Math.random();
-                if (ran < (35 / 100) && arr[i][j] != start && arr[i][j] != end) {
-                    arr[i][j].wall = true;
-                    arr[i][j].color = "white";
-                }
-            }
-        }
-        draw();
+        wallButton();
     }
 });
+
+//button function for generating random walls
+function wallButton() {
+    mode = 0;
+    
+    //keep track of start and end to preserve their memory
+    let memStart = start;
+    let memEnd = end;
+
+    //resets the map
+    setup();
+
+    //reformulates the start and end node
+    if (memStart) {
+        let newStart = arr[memStart.x][memStart.y];
+        newStart.color = memStart.color;
+        start = newStart;
+    }
+    if (memEnd) {
+        let newEnd = arr[memEnd.x][memEnd.y];
+        newEnd.color = memEnd.color;
+        end = newEnd;
+    }
+
+    //randomly generates walls
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            let ran = Math.random();
+            if (ran < (35 / 100) && arr[i][j] != start && arr[i][j] != end) {
+                arr[i][j].wall = true;
+                arr[i][j].color = "white";
+            }
+        }
+    }
+    draw();
+}
 
 //generates a maze
 async function generate_maze() {
