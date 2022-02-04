@@ -7,13 +7,15 @@
 <header>
   <span class="rowsText">Size: </span> <span class="choice" id="choice"></span>
 
-  <span class="speedText">Speed</span>
+  <span class="speedText">Speed: </span> <span class="choice2" id="choice2"></span>
 
   <div id="inputs">
     <input type="button" value="Run Algorithm" class="Run" onclick="buttonAStar(); blur();">
     <input type="button" value="Clear Board" class="Clear" onclick="if (mode == 0) setup(); blur();">
 
     <input type="button" value="Generate Maze" class="Maze" onclick="mazeButton(); blur();">
+
+    <input type="button" value="Generate Walls" class="Walls" onclick="wallButton(); blur();">
 
     <input class='slider' id='slider' type="range" min=10 max=99 step=1>
 
