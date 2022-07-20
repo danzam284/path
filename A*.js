@@ -35,12 +35,6 @@ var end;
 //width and height of canvas
 var width = c.width, height = c.height;
 
-//keeps track of background color
-var r = 176;
-var g = 216;
-var b = 230;
-var rgbSign = true;
-
 //number of rows and columns in the canvas
 var rows = 40, cols = 40;
 
@@ -172,35 +166,6 @@ function hScore(i, j) {
 
 //draws the grid to the canvas
 function draw() {
-    if (rgbSign) {
-        if (r > 48) {
-            r--;
-        }
-        if (g > 25) {
-            g--;
-        }
-        if (b > 52) {
-            b--;
-        }
-        if (g == 25) {
-            rgbSign = false;
-        }
-    }
-    else {
-        if (r < 173) {
-            r++;
-        }
-        if (g < 216) {
-            g++;
-        }
-        if (b < 230) {
-            b++;
-        }
-        if (g == 216) {
-            rgbSign = true;
-        }
-    }
-    document.body.style.backgroundColor = "rgb(" + r + ", " + g + ", " +  b + ")";
 
     ctx.clearRect(0, 0, c.width, c.height);
     for (let i = 0; i < rows; i++) {
